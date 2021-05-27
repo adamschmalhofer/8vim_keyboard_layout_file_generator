@@ -90,7 +90,7 @@ def movement_sequence(start_at, clockwise, steps):
 
 
 with open(sys.argv[1]) as f:
-    your_email_address = f.readline().rstrip('\n\r')
+    at_sign_overloads = [f.readline().rstrip('\n\r') for _ in range(0, 3)]
     new_layout_lower = f.readline().rstrip('\n\r')
     new_layout_upper = f.readline().rstrip('\n\r')
 
@@ -138,20 +138,22 @@ def movement_xml_layer(layout_lower, layout_upper, at_sign_upper):
     layout_upper = ''.join([c for i, c in enumerate(layout_upper) if i % 5 != 4])
 
     for lower, upper, lower_movement, upper_movement in zip(layout_lower, layout_upper, movement_lower, movement_upper):
+        caps_upper = upper
+        caps_lower = lower
         if lower == upper == ' ':
             continue
         elif lower == upper == '@':
             # Keep the special functionality to enter your email address.
-            lower = "@"
-            upper = at_sign_upper
+            upper = at_sign_upper[0]
+            caps_lower = at_sign_upper[1]
+            caps_upper = at_sign_upper[2]
         elif lower == upper == '!':
             # Useful exclamation marks
-            lower = "!"
-            upper = "!!!"
+            upper = caps_upper = "!!!"
         elif ' ' == lower != upper:
-            upper = lower
+            lower = caps_lower = upper
         elif ' ' == upper != lower:
-            lower = upper
+            upper = caps_upper = lower
         assert(' ' not in [lower, upper])
         final_output_lower += f"""
     <keyboardAction>
@@ -165,8 +167,8 @@ def movement_xml_layer(layout_lower, layout_upper, at_sign_upper):
     <keyboardAction>
         <keyboardActionType>INPUT_TEXT</keyboardActionType>
         <movementSequence>INSIDE_CIRCLE;{';'.join(upper_movement)};INSIDE_CIRCLE;</movementSequence>
-        <inputString>{upper}</inputString>
-        <inputCapsLockString>{lower}</inputCapsLockString>
+        <inputString>{caps_upper}</inputString>
+        <inputCapsLockString>{caps_lower}</inputCapsLockString>
     </keyboardAction>
 """
     return f"""
@@ -357,7 +359,7 @@ XML_END = """
 
 </keyboardActionMap>"""
 
-output = XML_START + movement_xml_layer(new_layout_lower, new_layout_upper, your_email_address) + XML_END
+output = XML_START + movement_xml_layer(new_layout_lower, new_layout_upper, at_sign_overloads) + XML_END
 with open("keyboard_actions.xml", "w") as f:
     f.write( output )
 
