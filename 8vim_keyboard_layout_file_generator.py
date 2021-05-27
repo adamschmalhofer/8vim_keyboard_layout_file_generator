@@ -84,6 +84,16 @@ def movement_sequence(start_at, clockwise, steps):
         direction *= -1
 
 
+def to_8vim_layout_string(new_layout):
+    # 8VIM uses this string format to display the letters on the keyboard.
+    # original_layout_string = "nomufv!weilhkj@,tscdzg.'yabrpxq?"
+    new_layout_string = ""
+    # Convert from our nice layout string to the ugly one that 8vim uses.
+    for i in list(range(10, 14)) + list(range(20, 24)) + list(range(30, 34)) + list(range(0, 4)):
+        new_layout_string += new_layout[i] + new_layout[i+5]
+    return new_layout_string
+
+
 ################
 # Main program #
 ################
@@ -95,20 +105,8 @@ with open(sys.argv[1]) as f:
     new_layout_upper = f.readline().rstrip('\n\r')
 
 
-# 8VIM uses this string format to display the letters on the keyboard.
-original_layout_string_lower = "nomufv!weilhkj@,tscdzg.'yabrpxq?"
-original_layout_string_upper = "NOMUFV!WEILHKJ@_TSCDZG-\"YABRPXQ*"
-
-new_layout_string_lower = ""
-new_layout_string_upper = ""
-
-# Convert from our nice layout string to the ugly one that 8vim uses.
-for i in list(range(10, 14)) + list(range(20, 24)) + list(range(30, 34)) + list(range(0, 4)):
-    new_layout_string_lower += new_layout_lower[i]
-    new_layout_string_lower += new_layout_lower[i+5]
-    new_layout_string_upper += new_layout_upper[i]
-    new_layout_string_upper += new_layout_upper[i+5]
-
+new_layout_string_upper = to_8vim_layout_string(new_layout_upper)
+new_layout_string_lower = to_8vim_layout_string(new_layout_lower)
 
 ###################################################
 # Start buliding the keyboard_actions.xml output. #
