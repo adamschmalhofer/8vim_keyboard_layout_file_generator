@@ -96,18 +96,18 @@ def to_8vim_layout_string(new_layout):
     return new_layout_string
 
 
-def movement_xml_layer(layout_lower, layout_upper, layer, at_sign_upper):
-    movement_lower = [movement_sequence(start_at, clockwise, [i] + [1, 1] * layer)
+def movement_xml_layer(layout_lower, layout_upper, layer, at_sign_upper, layered_movement_sequencer):
+    movement_lower = [layered_movement_sequencer(start_at, clockwise, i, layer, False)
                       for start_at in reversed(DIRECTIONS)
                       for clockwise in [False, True]
                       for i in range(1, 5)]
     movement_lower = movement_lower[-4:] + movement_lower[:-4]
 
     # The movement for going all the way around the board to capitalize.
-    movement_upper = [movement_sequence(start_at, clockwise, [i] + [1, 1] * layer)
+    movement_upper = [layered_movement_sequencer(start_at, clockwise, i, layer, True)
                       for start_at in reversed(DIRECTIONS)
                       for clockwise in [False, True]
-                      for i in range(5, 9)]
+                      for i in range(1, 5)]
     movement_upper = movement_upper[-4:] + movement_upper[:-4]
     # All lower keys stored in here.
     final_output_lower = ""
@@ -300,6 +300,10 @@ XML_END = """
 </keyboardActionMap>"""
 
 
+def eight_pen_layering(start_at, clockwise, num_steps, layer, is_upper):
+    return movement_sequence(start_at, clockwise, [num_steps + (4 if is_upper else 0)] + [1, 1]*layer)
+
+
 ################
 # Main program #
 ################
@@ -321,7 +325,7 @@ for new_layout_lower, new_layout_upper, layer in [(lower, upper, i // 2) for i, 
     <!-- ========= -->""")
     print_new_layout( new_layout_lower, "lower" )
     print_new_layout( new_layout_upper, "upper" )
-    layers.append(movement_xml_layer(new_layout_lower, new_layout_upper, layer, at_sign_overloads))
+    layers.append(movement_xml_layer(new_layout_lower, new_layout_upper, layer, at_sign_overloads, eight_pen_layering))
 
 
 with open("keyboard_actions.xml", "w") as f:
