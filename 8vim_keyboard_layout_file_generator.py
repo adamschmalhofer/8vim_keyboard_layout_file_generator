@@ -37,12 +37,8 @@ your_email_address = "youremailaddress@gmail.com"
 # Passed a string of just letters and will map that to the layout.
 # E.g. the original 8pen layout passed like this.
 # "ybpqarx?nmf!ouvwelk@ihj,tcz.sdg'"
-def print_new_layout( letters, is_lowercase=True, is_compact_layout=False ):
-    if is_lowercase == True:
-        str_case = "lower"
-    else:
-        str_case = "upper"
-
+def print_new_layout( letters, str_case, is_compact_layout=False ):
+    assert(len(str_case) == 5)
     layout_compact =  f"""
 {letters[27]}\{letters[31]}           {letters[3]}/{letters[7]}
  {letters[26]}\{letters[30]}         {letters[2]}/{letters[6]}
@@ -389,8 +385,8 @@ f = open("keyboard_actions.xml", "w")
 f.write( output )
 f.close()
 
-print_new_layout( new_layout_lower, is_lowercase=True  )
-print_new_layout( new_layout_upper, is_lowercase=False )
+print_new_layout( new_layout_lower, "lower" )
+print_new_layout( new_layout_upper, "upper" )
 
 print()
 print("--- Usage Notes ---")
