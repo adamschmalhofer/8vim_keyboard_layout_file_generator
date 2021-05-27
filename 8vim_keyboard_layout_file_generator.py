@@ -23,11 +23,6 @@
 import sys
 
 
-with open(sys.argv[1]) as f:
-    your_email_address = f.readline().rstrip('\n\r')
-    new_layout_lower = f.readline().rstrip('\n\r')
-    new_layout_upper = f.readline().rstrip('\n\r')
-
 # Passed a string of just letters and will map that to the layout.
 # E.g. the original 8pen layout passed like this.
 # "ybpqarx?nmf!ouvwelk@ihj,tcz.sdg'"
@@ -74,10 +69,6 @@ def print_new_layout( letters, str_case, is_compact_layout=False ):
 
     return
 
-################
-# Main program #
-################
-
 
 DIRECTIONS = ['TOP', 'LEFT', 'BOTTOM', 'RIGHT']
 
@@ -94,21 +85,15 @@ def movement_sequence(start_at, clockwise, steps):
     return f"        <movementSequence>INSIDE_CIRCLE;{';'.join(sequence)};INSIDE_CIRCLE;</movementSequence>"
 
 
-# The movements assigned to the original layout.
-# We use this to make the new layout 
-movement_lower = [movement_sequence(start_at, clockwise, [i])
-                  for start_at in reversed(DIRECTIONS)
-                  for clockwise in [False, True]
-                  for i in range(1, 5)]
-movement_lower = movement_lower[-4:] + movement_lower[:-4]
+################
+# Main program #
+################
 
 
-# The movement for going all the way around the board to capitalize.
-movement_upper = [movement_sequence(start_at, clockwise, [i])
-                  for start_at in reversed(DIRECTIONS)
-                  for clockwise in [False, True]
-                  for i in range(5, 9)]
-movement_upper = movement_upper[-4:] + movement_upper[:-4]
+with open(sys.argv[1]) as f:
+    your_email_address = f.readline().rstrip('\n\r')
+    new_layout_lower = f.readline().rstrip('\n\r')
+    new_layout_upper = f.readline().rstrip('\n\r')
 
 
 # 8VIM uses this string format to display the letters on the keyboard.
@@ -130,58 +115,57 @@ for i in list(range(10, 14)) + list(range(20, 24)) + list(range(30, 34)) + list(
 # Start buliding the keyboard_actions.xml output. #
 ###################################################
 
-# Used with sending key code
-INPUT_KEY_START = """
-    <keyboardAction>
-        <keyboardActionType>INPUT_KEY</keyboardActionType>
-"""
-INPUT_KEY_END = """
-    </keyboardAction>
-"""
 
-# This line is used with capital letters for some reason.
-# It's used when we circle around the board to capitalize a letter.
-FLAGS = """
-        <flags>
-            <flag>1</flag>
-        </flags>"""
-
-# Inputing text rather than a single keycode.
-INPUT_TEXT_START = """
+def movement_xml_layer(layout_lower, layout_upper, at_sign_upper):
+    INPUT_TEXT_START = """
     <keyboardAction>
         <keyboardActionType>INPUT_TEXT</keyboardActionType>
 """
 
-INPUT_TEXT_END = """
+    INPUT_TEXT_END = """
     </keyboardAction>
 """
 
-# All lower keys stored in here.
-final_output_lower = ""
-# All upper keys stored in here.
-final_output_upper = ""
+    movement_lower = [movement_sequence(start_at, clockwise, [i])
+                      for start_at in reversed(DIRECTIONS)
+                      for clockwise in [False, True]
+                      for i in range(1, 5)]
+    movement_lower = movement_lower[-4:] + movement_lower[:-4]
 
-new_layout_lower = ''.join([c for i, c in enumerate(new_layout_lower) if i % 5 != 4])
-new_layout_upper = ''.join([c for i, c in enumerate(new_layout_upper) if i % 5 != 4])
+    # The movement for going all the way around the board to capitalize.
+    movement_upper = [movement_sequence(start_at, clockwise, [i])
+                      for start_at in reversed(DIRECTIONS)
+                      for clockwise in [False, True]
+                      for i in range(5, 9)]
+    movement_upper = movement_upper[-4:] + movement_upper[:-4]
+    # All lower keys stored in here.
+    final_output_lower = ""
+    # All upper keys stored in here.
+    final_output_upper = ""
 
-for lower, upper, lower_movement, upper_movement in zip(new_layout_lower, new_layout_upper, movement_lower, movement_upper):
-    if lower == upper == ' ':
-        continue
-    elif lower == upper == '@':
-        # Keep the special functionality to enter your email address.
-        lower = "@"
-        upper = your_email_address
-    elif lower == upper == '!':
-        # Useful exclamation marks
-        lower = "!"
-        upper = "!!!"
-    elif ' ' == lower != upper:
-        upper = lower
-    elif ' ' == upper != lower:
-        lower = upper
-    assert(' ' not in [lower, upper])
-    final_output_lower += f'{INPUT_TEXT_START}{lower_movement}\n        <inputString>{lower}</inputString>\n        <inputCapsLockString>{upper}</inputCapsLockString>{INPUT_TEXT_END}'
-    final_output_upper += f'{INPUT_TEXT_START}{upper_movement}\n        <inputString>{upper}</inputString>\n        <inputCapsLockString>{lower}</inputCapsLockString>{INPUT_TEXT_END}'
+    # Remove the spaces seperating the arms of the "X"
+    layout_lower = ''.join([c for i, c in enumerate(layout_lower) if i % 5 != 4])
+    layout_upper = ''.join([c for i, c in enumerate(layout_upper) if i % 5 != 4])
+
+    for lower, upper, lower_movement, upper_movement in zip(layout_lower, layout_upper, movement_lower, movement_upper):
+        if lower == upper == ' ':
+            continue
+        elif lower == upper == '@':
+            # Keep the special functionality to enter your email address.
+            lower = "@"
+            upper = at_sign_upper
+        elif lower == upper == '!':
+            # Useful exclamation marks
+            lower = "!"
+            upper = "!!!"
+        elif ' ' == lower != upper:
+            upper = lower
+        elif ' ' == upper != lower:
+            lower = upper
+        assert(' ' not in [lower, upper])
+        final_output_lower += f'{INPUT_TEXT_START}{lower_movement}\n        <inputString>{lower}</inputString>\n        <inputCapsLockString>{upper}</inputCapsLockString>{INPUT_TEXT_END}'
+        final_output_upper += f'{INPUT_TEXT_START}{upper_movement}\n        <inputString>{upper}</inputString>\n        <inputCapsLockString>{lower}</inputCapsLockString>{INPUT_TEXT_END}'
+    return (final_output_lower, final_output_upper)
 
 
 XML_START = """<keyboardActionMap>
@@ -197,7 +181,6 @@ CAPITAL = """
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Capital Characters by going all the way around the board -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->"""
-final_output_upper
 
 XML_END = """
 
@@ -372,6 +355,7 @@ XML_END = """
 
 </keyboardActionMap>"""
 
+final_output_lower, final_output_upper = movement_xml_layer(new_layout_lower, new_layout_upper, your_email_address)
 output = XML_START + final_output_lower + CAPITAL + final_output_upper + XML_END
 with open("keyboard_actions.xml", "w") as f:
     f.write( output )
