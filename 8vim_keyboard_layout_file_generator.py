@@ -10,29 +10,23 @@
 # -------------------------------------------
 
 
-# Please change this to the layout you want
-# Make the @ character in the same place for the upper and lower case for extra functionality.
-#    Circle around the board 1 more time to input your email address.
-#    In caps lock mode writing an @ will enter @gmail.com for you
-# Make the ! character in the same place for the upper and lower case for extra functionality.
-#    Circle around the board 1 more time to write three exclamation marks !!!
-new_layout_lower      = "nmpq ecx? rsb! ouvz hlj@ ifw, tyk. adg'"
-new_layout_upper      = "NMPQ ECX* RSB! OUVZ HLJ@ IFW_ TYK- ADG\""
+# Please run the script with the first argument being a text file with the layout information and it will output the keyboard_actions.xml file for you :).
+# In the first line put your email address and it to be added when you go all the way around the board for the @ sign (for this to work make the @ 
+# character in the same place for the upper and lower case). The next line contains the lower case layout; followed by a line with the upper case layout.
+# See en_eight_pen_esperanto.txt for an example and the order of the characters as used by 8vim's default keyboard.
 
-# WARNING: Don't change this original string!
-# It's not used in the code, but is your reference for what the new layout will look like compared to the old one.
-original_layout_lower = "ybpq arx? nmf! ouvw elk@ ihj, tcz. sdg'"
-original_layout_upper = "YBPQ ARX* NMF! OUVW ELK@ IHJ_ TCZ- SDG\""
-
-# Put your email address here for it to be added when you go all the way around the board for the @ sign.
-your_email_address = "youremailaddress@gmail.com"
-
-# Setup over.
-# Please run the script and it will output the keyboard_actions.xml file for you :).
 
 # -------------------
 #    Program start
 # -------------------
+
+import sys
+
+
+with open(sys.argv[1]) as f:
+    your_email_address = f.readline().rstrip('\n\r')
+    new_layout_lower = f.readline().rstrip('\n\r')
+    new_layout_upper = f.readline().rstrip('\n\r')
 
 # Passed a string of just letters and will map that to the layout.
 # E.g. the original 8pen layout passed like this.
