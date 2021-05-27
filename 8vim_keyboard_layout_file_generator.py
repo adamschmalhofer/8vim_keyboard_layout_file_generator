@@ -29,37 +29,37 @@ import sys
 def print_new_layout( letters, str_case, is_compact_layout=False ):
     assert(len(str_case) == 5)
     layout_compact =  f"""
-{letters[27]}\{letters[31]}           {letters[3]}/{letters[7]}
- {letters[26]}\{letters[30]}         {letters[2]}/{letters[6]}
-  {letters[25]}\{letters[29]}       {letters[1]}/{letters[5]}
-   {letters[24]}\{letters[28]}_____{letters[0]}/{letters[4]}
+{letters[33]}\{letters[38]}           {letters[3]}/{letters[8]}
+ {letters[32]}\{letters[37]}         {letters[2]}/{letters[7]}
+  {letters[31]}\{letters[36]}       {letters[1]}/{letters[6]}
+   {letters[30]}\{letters[35]}_____{letters[0]}/{letters[5]}
      |{str_case}|
      |case |
-   {letters[20]}/{letters[16]}⎺⎺⎺⎺⎺{letters[12]}\{letters[8]}
-  {letters[21]}/{letters[17]}       {letters[13]}\{letters[9]}
- {letters[22]}/{letters[18]}         {letters[14]}\{letters[10]}
-{letters[23]}/{letters[19]}           {letters[15]}\{letters[11]}
+   {letters[25]}/{letters[20]}⎺⎺⎺⎺⎺{letters[15]}\{letters[10]}
+  {letters[26]}/{letters[21]}       {letters[16]}\{letters[11]}
+ {letters[27]}/{letters[22]}         {letters[17]}\{letters[12]}
+{letters[28]}/{letters[23]}           {letters[18]}\{letters[13]}
 """
 
     layout =  f"""
-{letters[27]} \ {letters[31]}                 {letters[3]} / {letters[7]}
+{letters[33]} \ {letters[38]}                 {letters[3]} / {letters[8]}
    \                   / 
-  {letters[26]} \ {letters[30]}             {letters[2]} / {letters[6]}
+  {letters[32]} \ {letters[37]}             {letters[2]} / {letters[7]}
      \               / 
-    {letters[25]} \ {letters[29]}         {letters[1]} / {letters[5]}
+    {letters[31]} \ {letters[36]}         {letters[1]} / {letters[6]}
        \           / 
-      {letters[24]} \ {letters[28]}     {letters[0]} / {letters[4]}
+      {letters[30]} \ {letters[35]}     {letters[0]} / {letters[5]}
          \ _____ / 
           |{str_case}|
           |case |
          / ⎺⎺⎺⎺⎺ \ 
-      {letters[20]} / {letters[16]}     {letters[12]} \ {letters[8]}
+      {letters[25]} / {letters[20]}     {letters[15]} \ {letters[10]}
        /           \ 
-    {letters[21]} / {letters[17]}         {letters[13]} \ {letters[9]}
+    {letters[26]} / {letters[21]}         {letters[16]} \ {letters[11]}
      /               \ 
-  {letters[22]} / {letters[18]}             {letters[14]} \ {letters[10]}
+  {letters[27]} / {letters[22]}             {letters[17]} \ {letters[12]}
    /                   \ 
-{letters[23]} / {letters[19]}                 {letters[15]} \ {letters[11]}
+{letters[28]} / {letters[23]}                 {letters[18]} \ {letters[13]}
 """
 
     if is_compact_layout:
