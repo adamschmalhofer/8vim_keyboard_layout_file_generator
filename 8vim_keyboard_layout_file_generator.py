@@ -129,30 +129,11 @@ new_layout_string_lower = ""
 new_layout_string_upper = ""
 
 # Convert from our nice layout string to the ugly one that 8vim uses.
-for i in range(10, 14):
+for i in list(range(10, 14)) + list(range(20, 24)) + list(range(30, 34)) + list(range(0, 4)):
     new_layout_string_lower += new_layout_lower[i]
     new_layout_string_lower += new_layout_lower[i+5]
     new_layout_string_upper += new_layout_upper[i]
     new_layout_string_upper += new_layout_upper[i+5]
-
-for i in range(20, 24):
-    new_layout_string_lower += new_layout_lower[i]
-    new_layout_string_lower += new_layout_lower[i+5]
-    new_layout_string_upper += new_layout_upper[i]
-    new_layout_string_upper += new_layout_upper[i+5]
-
-for i in range(30, 34):
-    new_layout_string_lower += new_layout_lower[i]
-    new_layout_string_lower += new_layout_lower[i+5]
-    new_layout_string_upper += new_layout_upper[i]
-    new_layout_string_upper += new_layout_upper[i+5]
-
-for i in range(0, 4):
-    new_layout_string_lower += new_layout_lower[i]
-    new_layout_string_lower += new_layout_lower[i+5]
-    new_layout_string_upper += new_layout_upper[i]
-    new_layout_string_upper += new_layout_upper[i+5]
-
 
 
 ###################################################
