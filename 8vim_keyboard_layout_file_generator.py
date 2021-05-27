@@ -169,22 +169,20 @@ def movement_xml_layer(layout_lower, layout_upper, at_sign_upper):
         <inputCapsLockString>{lower}</inputCapsLockString>
     </keyboardAction>
 """
-    return (final_output_lower, final_output_upper)
+    return f"""
+    <!-- ~~~~~~~~~ -->
+    <!-- Lowercase -->
+    <!-- ~~~~~~~~~ -->{final_output_lower}
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Capital Characters by going all the way around the board -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->{final_output_upper}"""
 
 
 XML_START = """<keyboardActionMap>
     <!-- Keywords for defining the movements -->
     <!--{NO_TOUCH, INSIDE_CIRCLE, TOP, LEFT, BOTTOM, RIGHT}-->
-
-    <!-- ~~~~~~~~~ -->
-    <!-- Lowercase -->
-    <!-- ~~~~~~~~~ -->"""
-
-CAPITAL = """
-
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-    <!-- Capital Characters by going all the way around the board -->
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->"""
+"""
 
 XML_END = """
 
@@ -359,8 +357,7 @@ XML_END = """
 
 </keyboardActionMap>"""
 
-final_output_lower, final_output_upper = movement_xml_layer(new_layout_lower, new_layout_upper, your_email_address)
-output = XML_START + final_output_lower + CAPITAL + final_output_upper + XML_END
+output = XML_START + movement_xml_layer(new_layout_lower, new_layout_upper, your_email_address) + XML_END
 with open("keyboard_actions.xml", "w") as f:
     f.write( output )
 
