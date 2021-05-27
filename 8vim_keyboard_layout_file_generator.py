@@ -21,55 +21,62 @@
 # -------------------
 
 import sys
-from itertools import chain
+from itertools import chain, zip_longest
+
+
+def duo_colum(first, seccond, boarder_width=10):
+    first_lines = [line.rstrip('\n\r') for line in first.splitlines()]
+    seccond_lines = [line.rstrip('\n\r') for line in seccond.splitlines()]
+    start_right_colum_at = max(len(line) for line in first_lines) + boarder_width
+
+    for left, right in zip_longest(first_lines, seccond_lines, fillvalue=''):
+        yield left + ' ' * (start_right_colum_at - len(left)) + right
 
 
 # Passed a string of just letters and will map that to the layout.
 # E.g. the original 8pen layout passed like this.
 # "ybpqarx?nmf!ouvwelk@ihj,tcz.sdg'"
-def print_new_layout( letters, str_case, is_compact_layout=False ):
+def ascii_art( letters, str_case, is_compact_layout=False ):
     assert(len(str_case) == 5)
     letters = letters + ' ' * max(0, 39 - len(letters))
     layout_compact =  f"""
-{letters[33]}\{letters[38]}           {letters[3]}/{letters[8]}
- {letters[32]}\{letters[37]}         {letters[2]}/{letters[7]}
-  {letters[31]}\{letters[36]}       {letters[1]}/{letters[6]}
-   {letters[30]}\{letters[35]}_____{letters[0]}/{letters[5]}
+{letters[33]}\\{letters[38]}           {letters[3]}/{letters[8]}
+ {letters[32]}\\{letters[37]}         {letters[2]}/{letters[7]}
+  {letters[31]}\\{letters[36]}       {letters[1]}/{letters[6]}
+   {letters[30]}\\{letters[35]}_____{letters[0]}/{letters[5]}
      |{str_case}|
      |case |
-   {letters[25]}/{letters[20]}⎺⎺⎺⎺⎺{letters[15]}\{letters[10]}
-  {letters[26]}/{letters[21]}       {letters[16]}\{letters[11]}
- {letters[27]}/{letters[22]}         {letters[17]}\{letters[12]}
-{letters[28]}/{letters[23]}           {letters[18]}\{letters[13]}
+   {letters[25]}/{letters[20]}⎺⎺⎺⎺⎺{letters[15]}\\{letters[10]}
+  {letters[26]}/{letters[21]}       {letters[16]}\\{letters[11]}
+ {letters[27]}/{letters[22]}         {letters[17]}\\{letters[12]}
+{letters[28]}/{letters[23]}           {letters[18]}\\{letters[13]}
 """
 
     layout =  f"""
-{letters[33]} \ {letters[38]}                 {letters[3]} / {letters[8]}
-   \                   / 
-  {letters[32]} \ {letters[37]}             {letters[2]} / {letters[7]}
-     \               / 
-    {letters[31]} \ {letters[36]}         {letters[1]} / {letters[6]}
-       \           / 
-      {letters[30]} \ {letters[35]}     {letters[0]} / {letters[5]}
-         \ _____ / 
+{letters[33]} \\ {letters[38]}                 {letters[3]} / {letters[8]}
+   \\                   / 
+  {letters[32]} \\ {letters[37]}             {letters[2]} / {letters[7]}
+     \\               / 
+    {letters[31]} \\ {letters[36]}         {letters[1]} / {letters[6]}
+       \\           / 
+      {letters[30]} \\ {letters[35]}     {letters[0]} / {letters[5]}
+         \\ _____ / 
           |{str_case}|
           |case |
-         / ⎺⎺⎺⎺⎺ \ 
-      {letters[25]} / {letters[20]}     {letters[15]} \ {letters[10]}
-       /           \ 
-    {letters[26]} / {letters[21]}         {letters[16]} \ {letters[11]}
-     /               \ 
-  {letters[27]} / {letters[22]}             {letters[17]} \ {letters[12]}
-   /                   \ 
-{letters[28]} / {letters[23]}                 {letters[18]} \ {letters[13]}
+         / ⎺⎺⎺⎺⎺ \\ 
+      {letters[25]} / {letters[20]}     {letters[15]} \\ {letters[10]}
+       /           \\ 
+    {letters[26]} / {letters[21]}         {letters[16]} \\ {letters[11]}
+     /               \\ 
+  {letters[27]} / {letters[22]}             {letters[17]} \\ {letters[12]}
+   /                   \\ 
+{letters[28]} / {letters[23]}                 {letters[18]} \\ {letters[13]}
 """
 
     if is_compact_layout:
-        print( layout_compact )
+        return layout_compact
     else:
-        print( layout )
-
-    return
+        return layout
 
 
 DIRECTIONS = ['TOP', 'LEFT', 'BOTTOM', 'RIGHT']
@@ -340,8 +347,7 @@ for new_layout_lower, new_layout_upper, layer in [(lower, upper, i // 2) for i, 
     <!-- ========= -->
     <!-- Layer {layer}   -->
     <!-- ========= -->""")
-    print_new_layout( new_layout_lower, "lower" )
-    print_new_layout( new_layout_upper, "upper" )
+    print('\n'.join(duo_colum(ascii_art( new_layout_lower, "lower" ), ascii_art( new_layout_upper, "upper" ))))
     layers.append(movement_xml_layer(new_layout_lower, new_layout_upper, layer, at_sign_overloads, layering))
 
 
