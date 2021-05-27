@@ -30,22 +30,23 @@ def duo_colum(first, seccond, boarder_width=10):
     start_right_colum_at = max(len(line) for line in first_lines) + boarder_width
 
     for left, right in zip_longest(first_lines, seccond_lines, fillvalue=''):
-        yield left + ' ' * (start_right_colum_at - len(left)) + right
+        yield left.ljust(start_right_colum_at) + right
 
 
 # Passed a string of just letters and will map that to the layout.
 # E.g. the original 8pen layout passed like this.
 # "ybpqarx?nmf!ouvwelk@ihj,tcz.sdg'"
-def ascii_art( letters, str_case, is_compact_layout=False ):
-    assert(len(str_case) == 5)
-    letters = letters + ' ' * max(0, 39 - len(letters))
+def ascii_art( letters, str_case, label, is_compact_layout=False ):
+    str_case = str_case[:6].center(5)
+    label = label[:6].center(5)
+    letters = letters.ljust(39)
     layout_compact =  f"""
 {letters[33]}\\{letters[38]}           {letters[3]}/{letters[8]}
  {letters[32]}\\{letters[37]}         {letters[2]}/{letters[7]}
   {letters[31]}\\{letters[36]}       {letters[1]}/{letters[6]}
    {letters[30]}\\{letters[35]}_____{letters[0]}/{letters[5]}
      |{str_case}|
-     |case |
+     |{label}|
    {letters[25]}/{letters[20]}⎺⎺⎺⎺⎺{letters[15]}\\{letters[10]}
   {letters[26]}/{letters[21]}       {letters[16]}\\{letters[11]}
  {letters[27]}/{letters[22]}         {letters[17]}\\{letters[12]}
@@ -62,7 +63,7 @@ def ascii_art( letters, str_case, is_compact_layout=False ):
       {letters[30]} \\ {letters[35]}     {letters[0]} / {letters[5]}
          \\ _____ / 
           |{str_case}|
-          |case |
+          |{label}|
          / ⎺⎺⎺⎺⎺ \\ 
       {letters[25]} / {letters[20]}     {letters[15]} \\ {letters[10]}
        /           \\ 
@@ -347,7 +348,7 @@ for new_layout_lower, new_layout_upper, layer in [(lower, upper, i // 2) for i, 
     <!-- ========= -->
     <!-- Layer {layer}   -->
     <!-- ========= -->""")
-    print('\n'.join(duo_colum(ascii_art( new_layout_lower, "lower" ), ascii_art( new_layout_upper, "upper" ))))
+    print('\n'.join(duo_colum(ascii_art( new_layout_lower, "lower", f"L {layer}" ), ascii_art( new_layout_upper, "upper", f"L {layer}" ))))
     layers.append(movement_xml_layer(new_layout_lower, new_layout_upper, layer, at_sign_overloads, layering))
 
 
