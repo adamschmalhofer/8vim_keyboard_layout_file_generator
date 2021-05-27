@@ -106,92 +106,19 @@ def movement_sequence(start_at, clockwise, steps):
 
 # The movements assigned to the original layout.
 # We use this to make the new layout 
-movement_lower = [
-    movement_sequence('TOP', True, [1]),
-    movement_sequence('TOP', True, [2]),
-    movement_sequence('TOP', True, [3]),
-    movement_sequence('TOP', True, [4]),
-
-    movement_sequence('RIGHT', False, [1]),
-    movement_sequence('RIGHT', False, [2]),
-    movement_sequence('RIGHT', False, [3]),
-    movement_sequence('RIGHT', False, [4]),
-
-    movement_sequence('RIGHT', True, [1]),
-    movement_sequence('RIGHT', True, [2]),
-    movement_sequence('RIGHT', True, [3]),
-    movement_sequence('RIGHT', True, [4]),
-
-    movement_sequence('BOTTOM', False, [1]),
-    movement_sequence('BOTTOM', False, [2]),
-    movement_sequence('BOTTOM', False, [3]),
-    movement_sequence('BOTTOM', False, [4]),
-
-    movement_sequence('BOTTOM', True, [1]),
-    movement_sequence('BOTTOM', True, [2]),
-    movement_sequence('BOTTOM', True, [3]),
-    movement_sequence('BOTTOM', True, [4]),
-
-    movement_sequence('LEFT', False, [1]),
-    movement_sequence('LEFT', False, [2]),
-    movement_sequence('LEFT', False, [3]),
-    movement_sequence('LEFT', False, [4]),
-
-    movement_sequence('LEFT', True, [1]),
-    movement_sequence('LEFT', True, [2]),
-    movement_sequence('LEFT', True, [3]),
-    movement_sequence('LEFT', True, [4]),
-
-    movement_sequence('TOP', False, [1]),
-    movement_sequence('TOP', False, [2]),
-    movement_sequence('TOP', False, [3]),
-    movement_sequence('TOP', False, [4]),
-]
+movement_lower = [movement_sequence(start_at, clockwise, [i])
+                  for start_at in reversed(DIRECTIONS)
+                  for clockwise in [False, True]
+                  for i in range(1, 5)]
+movement_lower = movement_lower[-4:] + movement_lower[:-4]
 
 
 # The movement for going all the way around the board to capitalize.
-movement_upper = [
-    movement_sequence('TOP', True, [5]),
-    movement_sequence('TOP', True, [6]),
-    movement_sequence('TOP', True, [7]),
-    movement_sequence('TOP', True, [8]),
-
-    movement_sequence('RIGHT', False, [5]),
-    movement_sequence('RIGHT', False, [6]),
-    movement_sequence('RIGHT', False, [7]),
-    movement_sequence('RIGHT', False, [8]),
-
-    movement_sequence('RIGHT', True, [5]),
-    movement_sequence('RIGHT', True, [6]),
-    movement_sequence('RIGHT', True, [7]),
-    movement_sequence('RIGHT', True, [8]),
-
-    movement_sequence('BOTTOM', False, [5]),
-    movement_sequence('BOTTOM', False, [6]),
-    movement_sequence('BOTTOM', False, [7]),
-    movement_sequence('BOTTOM', False, [8]),
-
-    movement_sequence('BOTTOM', True, [5]),
-    movement_sequence('BOTTOM', True, [6]),
-    movement_sequence('BOTTOM', True, [7]),
-    movement_sequence('BOTTOM', True, [8]),
-
-    movement_sequence('LEFT', False, [5]),
-    movement_sequence('LEFT', False, [6]),
-    movement_sequence('LEFT', False, [7]),
-    movement_sequence('LEFT', False, [8]),
-
-    movement_sequence('LEFT', True, [5]),
-    movement_sequence('LEFT', True, [6]),
-    movement_sequence('LEFT', True, [7]),
-    movement_sequence('LEFT', True, [8]),
-
-    movement_sequence('TOP', False, [5]),
-    movement_sequence('TOP', False, [6]),
-    movement_sequence('TOP', False, [7]),
-    movement_sequence('TOP', False, [8]),
-]
-
+movement_upper = [movement_sequence(start_at, clockwise, [i])
+                  for start_at in reversed(DIRECTIONS)
+                  for clockwise in [False, True]
+                  for i in range(5, 9)]
+movement_upper = movement_upper[-4:] + movement_upper[:-4]
 
 
 # 8VIM uses this string format to display the letters on the keyboard.
