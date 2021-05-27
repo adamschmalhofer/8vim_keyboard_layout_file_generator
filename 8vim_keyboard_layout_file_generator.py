@@ -95,34 +95,15 @@ def to_8vim_layout_string(new_layout):
     return new_layout_string
 
 
-################
-# Main program #
-################
-
-
-with open(sys.argv[1]) as f:
-    at_sign_overloads = [f.readline().rstrip('\n\r') for _ in range(0, 3)]
-    new_layout_lower = f.readline().rstrip('\n\r')
-    new_layout_upper = f.readline().rstrip('\n\r')
-
-
-new_layout_string_upper = to_8vim_layout_string(new_layout_upper)
-new_layout_string_lower = to_8vim_layout_string(new_layout_lower)
-
-###################################################
-# Start buliding the keyboard_actions.xml output. #
-###################################################
-
-
-def movement_xml_layer(layout_lower, layout_upper, at_sign_upper):
-    movement_lower = [movement_sequence(start_at, clockwise, [i])
+def movement_xml_layer(layout_lower, layout_upper, layer, at_sign_upper):
+    movement_lower = [movement_sequence(start_at, clockwise, [i] + [1, 1] * layer)
                       for start_at in reversed(DIRECTIONS)
                       for clockwise in [False, True]
                       for i in range(1, 5)]
     movement_lower = movement_lower[-4:] + movement_lower[:-4]
 
     # The movement for going all the way around the board to capitalize.
-    movement_upper = [movement_sequence(start_at, clockwise, [i])
+    movement_upper = [movement_sequence(start_at, clockwise, [i] + [1, 1] * layer)
                       for start_at in reversed(DIRECTIONS)
                       for clockwise in [False, True]
                       for i in range(5, 9)]
@@ -186,47 +167,6 @@ XML_START = """<keyboardActionMap>
 """
 
 XML_END = """
-
-    <!-- ~~~~~~~~~~~~~~~~~~~~ -->
-    <!-- Esperanto Characters -->
-    <!-- ~~~~~~~~~~~~~~~~~~~~ -->
-    <keyboardAction>
-        <keyboardActionType>INPUT_TEXT</keyboardActionType>
-        <movementSequence>INSIDE_CIRCLE;LEFT;TOP;RIGHT;TOP;RIGHT;INSIDE_CIRCLE;</movementSequence>
-        <inputString>ĉ</inputString>
-        <inputCapsLockString>Ĉ</inputCapsLockString>
-    </keyboardAction>
-    <keyboardAction>
-        <keyboardActionType>INPUT_TEXT</keyboardActionType>
-        <movementSequence>INSIDE_CIRCLE;TOP;LEFT;BOTTOM;RIGHT;BOTTOM;RIGHT;INSIDE_CIRCLE;</movementSequence>
-        <inputString>ĝ</inputString>
-        <inputCapsLockString>Ĝ</inputCapsLockString>
-    </keyboardAction>
-    <keyboardAction>
-        <keyboardActionType>INPUT_TEXT</keyboardActionType>
-        <movementSequence>INSIDE_CIRCLE;LEFT;BOTTOM;RIGHT;BOTTOM;RIGHT;INSIDE_CIRCLE;</movementSequence>
-        <inputString>ĥ</inputString>
-        <inputCapsLockString>Ĥ</inputCapsLockString>
-    </keyboardAction>
-    <keyboardAction>
-        <keyboardActionType>INPUT_TEXT</keyboardActionType>
-        <movementSequence>INSIDE_CIRCLE;LEFT;BOTTOM;RIGHT;TOP;RIGHT;TOP;INSIDE_CIRCLE;</movementSequence>
-        <inputString>ĵ</inputString>
-        <inputCapsLockString>Ĵ</inputCapsLockString>
-    </keyboardAction>
-    <keyboardAction>
-        <keyboardActionType>INPUT_TEXT</keyboardActionType>
-        <movementSequence>INSIDE_CIRCLE;TOP;LEFT;TOP;LEFT;INSIDE_CIRCLE;</movementSequence>
-        <inputString>ŝ</inputString>
-        <inputCapsLockString>Ŝ</inputCapsLockString>
-    </keyboardAction>
-    <keyboardAction>
-        <keyboardActionType>INPUT_TEXT</keyboardActionType>
-        <movementSequence>INSIDE_CIRCLE;BOTTOM;RIGHT;TOP;RIGHT;TOP;INSIDE_CIRCLE;</movementSequence>
-        <inputString>ŭ</inputString>
-        <inputCapsLockString>Ŭ</inputCapsLockString>
-    </keyboardAction>
-
 
     <!--Paste Sequence-->
     <keyboardAction>
@@ -358,20 +298,42 @@ XML_END = """
 
 </keyboardActionMap>"""
 
-output = XML_START + movement_xml_layer(new_layout_lower, new_layout_upper, at_sign_overloads) + XML_END
-with open("keyboard_actions.xml", "w") as f:
-    f.write( output )
 
-print_new_layout( new_layout_lower, "lower" )
-print_new_layout( new_layout_upper, "upper" )
+################
+# Main program #
+################
+
+
+with open(sys.argv[1]) as f:
+    lines = [text.rstrip('\n\r') for text in f.readlines()]
+at_sign_overloads = lines[:3]
+
+layers = []
+for new_layout_lower, new_layout_upper, layer in [(lower, upper, i // 2) for i, (lower, upper) in enumerate(zip(lines[3:], lines[4:])) if i % 2 == 0]:
+    if layer == 0:
+        layer0_string_upper = to_8vim_layout_string(new_layout_upper)
+        layer0_string_lower = to_8vim_layout_string(new_layout_lower)
+    else:
+        layers.append(f"""
+    <!-- ========= -->
+    <!-- Layer {layer}   -->
+    <!-- ========= -->""")
+    print_new_layout( new_layout_lower, "lower" )
+    print_new_layout( new_layout_upper, "upper" )
+    layers.append(movement_xml_layer(new_layout_lower, new_layout_upper, layer, at_sign_overloads))
+
+
+with open("keyboard_actions.xml", "w") as f:
+    f.write( ''.join([XML_START] + layers + [XML_END]) )
+
 
 print()
 print("--- Usage Notes ---")
 print("Edit this file")
 print("8vim/src/main/java/inc/flide/vim8/views/mainKeyboard/XpadView.java)")
 print("Change these variables to this:")
-print( "String characterSetSmall = \"" + new_layout_string_lower.replace("\"", "\\\"") + "\";" )
-print( "String characterSetCaps  = \"" + new_layout_string_upper.replace("\"", "\\\"") + "\";" )
+print( "String characterSetSmall = \"" + layer0_string_lower.replace("\"", "\\\"") + "\";" )
+print( "String characterSetCaps  = \"" + layer0_string_upper.replace("\"", "\\\"") + "\";" )
 print("")
 print("The new keyboard layout has been saved to:")
 print("keyboard_actions.xml")
