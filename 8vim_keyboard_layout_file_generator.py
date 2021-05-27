@@ -161,11 +161,13 @@ final_output_lower = ""
 # All upper keys stored in here.
 final_output_upper = ""
 
-new_layout_lower = new_layout_lower.replace(" ", "")
-new_layout_upper = new_layout_upper.replace(" ", "")
+new_layout_lower = ''.join([c for i, c in enumerate(new_layout_lower) if i % 5 != 4])
+new_layout_upper = ''.join([c for i, c in enumerate(new_layout_upper) if i % 5 != 4])
 
 for lower, upper, lower_movement, upper_movement in zip(new_layout_lower, new_layout_upper, movement_lower, movement_upper):
-    if lower == upper == '@':
+    if lower == upper == ' ':
+        continue
+    elif lower == upper == '@':
         # Keep the special functionality to enter your email address.
         lower = "@"
         upper = your_email_address
@@ -173,12 +175,13 @@ for lower, upper, lower_movement, upper_movement in zip(new_layout_lower, new_la
         # Useful exclamation marks
         lower = "!"
         upper = "!!!"
-
-    output_lower = f'{INPUT_TEXT_START}{lower_movement}\n        <inputString>{lower}</inputString>\n        <inputCapsLockString>{upper}</inputCapsLockString>{INPUT_TEXT_END}'
-    output_upper = f'{INPUT_TEXT_START}{upper_movement}\n        <inputString>{upper}</inputString>\n        <inputCapsLockString>{lower}</inputCapsLockString>{INPUT_TEXT_END}'
-
-    final_output_lower += output_lower
-    final_output_upper += output_upper
+    elif ' ' == lower != upper:
+        upper = lower
+    elif ' ' == upper != lower:
+        lower = upper
+    assert(' ' not in [lower, upper])
+    final_output_lower += f'{INPUT_TEXT_START}{lower_movement}\n        <inputString>{lower}</inputString>\n        <inputCapsLockString>{upper}</inputCapsLockString>{INPUT_TEXT_END}'
+    final_output_upper += f'{INPUT_TEXT_START}{upper_movement}\n        <inputString>{upper}</inputString>\n        <inputCapsLockString>{lower}</inputCapsLockString>{INPUT_TEXT_END}'
 
 
 XML_START = """<keyboardActionMap>
