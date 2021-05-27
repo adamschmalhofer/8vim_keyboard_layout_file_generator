@@ -300,8 +300,24 @@ XML_END = """
 </keyboardActionMap>"""
 
 
-def eight_pen_layering(start_at, clockwise, num_steps, layer, is_upper):
-    return movement_sequence(start_at, clockwise, [num_steps + (4 if is_upper else 0)] + [1, 1]*layer)
+class LayeringStrategies:
+    def full_circle_to_capitalize(self, num_steps, is_upper):
+        return [num_steps + (4 if is_upper else 0)]
+
+    def eight_pen(self, start_at, clockwise, num_steps, layer, is_upper):
+        return movement_sequence(start_at, clockwise, self.full_circle_to_capitalize(num_steps, is_upper) + [1, 1]*layer)
+
+    def single_direction_change(self, start_at, clockwise, num_steps, layer, is_upper):
+        return movement_sequence(start_at, clockwise, self.full_circle_to_capitalize(num_steps, is_upper) + ([layer] if layer > 0 else []))
+
+    def prefix_eight_pen(self, start_at, clockwise, num_steps, layer, is_upper):
+        return movement_sequence(start_at, clockwise, [1, 1]*layer + self.full_circle_to_capitalize(num_steps, is_upper))
+
+    def seperate_letter(self, start_at, clockwise, num_steps, layer, is_upper):
+        return ['TOP', 'INSIDE_CIRCLE']*layer + list(movement_sequence(start_at, clockwise, self.full_circle_to_capitalize(num_steps, is_upper)))
+
+    def get_strategy(self, name):
+        return self. __getattribute__(name)
 
 
 ################
@@ -311,10 +327,11 @@ def eight_pen_layering(start_at, clockwise, num_steps, layer, is_upper):
 
 with open(sys.argv[1]) as f:
     lines = [text.rstrip('\n\r') for text in f.readlines()]
-at_sign_overloads = lines[:3]
+layering = LayeringStrategies().get_strategy(lines[0])
+at_sign_overloads = lines[1:4]
 
 layers = []
-for new_layout_lower, new_layout_upper, layer in [(lower, upper, i // 2) for i, (lower, upper) in enumerate(zip(lines[3:], lines[4:])) if i % 2 == 0]:
+for new_layout_lower, new_layout_upper, layer in [(lower, upper, i // 2) for i, (lower, upper) in enumerate(zip(lines[4:], lines[5:])) if i % 2 == 0]:
     if layer == 0:
         layer0_string_upper = to_8vim_layout_string(new_layout_upper)
         layer0_string_lower = to_8vim_layout_string(new_layout_lower)
@@ -325,7 +342,7 @@ for new_layout_lower, new_layout_upper, layer in [(lower, upper, i // 2) for i, 
     <!-- ========= -->""")
     print_new_layout( new_layout_lower, "lower" )
     print_new_layout( new_layout_upper, "upper" )
-    layers.append(movement_xml_layer(new_layout_lower, new_layout_upper, layer, at_sign_overloads, eight_pen_layering))
+    layers.append(movement_xml_layer(new_layout_lower, new_layout_upper, layer, at_sign_overloads, layering))
 
 
 with open("keyboard_actions.xml", "w") as f:
