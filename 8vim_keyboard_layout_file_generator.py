@@ -21,6 +21,7 @@
 # -------------------
 
 import sys
+from itertools import chain
 
 
 # Passed a string of just letters and will map that to the layout.
@@ -89,7 +90,7 @@ def to_8vim_layout_string(new_layout):
     # original_layout_string = "nomufv!weilhkj@,tscdzg.'yabrpxq?"
     new_layout_string = ""
     # Convert from our nice layout string to the ugly one that 8vim uses.
-    for i in list(range(10, 14)) + list(range(20, 24)) + list(range(30, 34)) + list(range(0, 4)):
+    for i in chain(range(10, 14), range(20, 24), range(30, 34), range(0, 4)):
         new_layout_string += new_layout[i] + new_layout[i+5]
     return new_layout_string
 
