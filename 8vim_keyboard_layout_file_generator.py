@@ -375,9 +375,8 @@ XML_END = """
 </keyboardActionMap>"""
 
 output = XML_START + final_output_lower + CAPITAL + final_output_upper + XML_END
-f = open("keyboard_actions.xml", "w")
-f.write( output )
-f.close()
+with open("keyboard_actions.xml", "w") as f:
+    f.write( output )
 
 print_new_layout( new_layout_lower, "lower" )
 print_new_layout( new_layout_upper, "upper" )
