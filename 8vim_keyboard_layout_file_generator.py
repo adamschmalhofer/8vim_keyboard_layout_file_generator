@@ -164,26 +164,21 @@ final_output_upper = ""
 new_layout_lower = new_layout_lower.replace(" ", "")
 new_layout_upper = new_layout_upper.replace(" ", "")
 
-for i in range( len( new_layout_lower ) ):
-    if (new_layout_lower[i] == '@') and (new_layout_upper[i] == '@'):
+for lower, upper, lower_movement, upper_movement in zip(new_layout_lower, new_layout_upper, movement_lower, movement_upper):
+    if lower == upper == '@':
         # Keep the special functionality to enter your email address.
-        input_string_lower = "@"
-        input_string_upper = your_email_address
-    elif (new_layout_lower[i] == '!') and (new_layout_upper[i] == '!'):
+        lower = "@"
+        upper = your_email_address
+    elif lower == upper == '!':
         # Useful exclamation marks
-        input_string_lower = "!"
-        input_string_upper = "!!!"
-    else:
-        # It's just a normal special character so just add it.
-        input_string_lower = new_layout_lower[i]
-        input_string_upper = new_layout_upper[i]
+        lower = "!"
+        upper = "!!!"
 
-    output_lower = f'{INPUT_TEXT_START}{movement_lower[i]}\n        <inputString>{input_string_lower}</inputString>\n        <inputCapsLockString>{input_string_upper}</inputCapsLockString>{INPUT_TEXT_END}'
-    output_upper = f'{INPUT_TEXT_START}{movement_upper[i]}\n        <inputString>{input_string_upper}</inputString>\n        <inputCapsLockString>{input_string_lower}</inputCapsLockString>{INPUT_TEXT_END}'
+    output_lower = f'{INPUT_TEXT_START}{lower_movement}\n        <inputString>{lower}</inputString>\n        <inputCapsLockString>{upper}</inputCapsLockString>{INPUT_TEXT_END}'
+    output_upper = f'{INPUT_TEXT_START}{upper_movement}\n        <inputString>{upper}</inputString>\n        <inputCapsLockString>{lower}</inputCapsLockString>{INPUT_TEXT_END}'
 
     final_output_lower += output_lower
     final_output_upper += output_upper
-
 
 
 XML_START = """<keyboardActionMap>
