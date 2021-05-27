@@ -319,38 +319,21 @@ new_layout_lower = new_layout_lower.replace(" ", "")
 new_layout_upper = new_layout_upper.replace(" ", "")
 
 for i in range( len( new_layout_lower ) ):
-    output_lower = ""
-    output_upper = ""
-    if (new_layout_lower[i].lower() >= 'a') and (new_layout_lower[i].lower() <= 'z'):
-        caps_lock = ""
-        # Set the caps lock string if it's not an enlish a-z letter.
-        if not( (new_layout_upper[i].lower() >= 'a') and (new_layout_upper[i].lower() <= 'z') ):
-            caps_lock = "\n        <inputCapsLockString>" + new_layout_upper[i] + "</inputCapsLockString>"
-
-        key = "        <inputKey>KEYCODE_" + new_layout_lower[i].upper() + "</inputKey>"
-        output_lower = INPUT_KEY_START + movement_lower[i] + "\n" + key + caps_lock + INPUT_KEY_END
-        output_upper = INPUT_KEY_START + movement_upper[i] + "\n" + key + FLAGS     + INPUT_KEY_END
+    if (new_layout_lower[i] == '@') and (new_layout_upper[i] == '@'):
+        # Keep the special functionality to enter your email address.
+        input_string_lower = "@"
+        input_string_upper = your_email_address
+    elif (new_layout_lower[i] == '!') and (new_layout_upper[i] == '!'):
+        # Useful exclamation marks
+        input_string_lower = "!"
+        input_string_upper = "!!!"
     else:
-        # It's a special character so just use the text entry method.
-        if (new_layout_lower[i] == '@') and (new_layout_upper[i] == '@'):
-            # Keep the special functionality to enter your email address.
-            input_string_lower =   "        <inputString>"         + "@"                + "</inputString>"
-            input_string_upper =   "        <inputString>"         + your_email_address + "</inputString>"
-            caps_lock          = "\n        <inputCapsLockString>" + "@gmail.com"       + "</inputCapsLockString>"
+        # It's just a normal special character so just add it.
+        input_string_lower = new_layout_lower[i]
+        input_string_upper = new_layout_upper[i]
 
-        elif (new_layout_lower[i] == '!') and (new_layout_upper[i] == '!'):
-            # Useful exclamation marks
-            input_string_lower =   "        <inputString>"         + "!"                + "</inputString>"
-            input_string_upper =   "        <inputString>"         + "!!!"              + "</inputString>"
-            caps_lock          = "\n        <inputCapsLockString>" + "!"                + "</inputCapsLockString>"
-        else:
-            # It's just a normal special character so just add it.
-            input_string_lower =   "        <inputString>"         + new_layout_lower[i] + "</inputString>"
-            input_string_upper =   "        <inputString>"         + new_layout_upper[i] + "</inputString>"
-            caps_lock          = "\n        <inputCapsLockString>" + new_layout_upper[i] + "</inputCapsLockString>"
-
-        output_lower       = INPUT_TEXT_START + movement_lower[i] + "\n" + input_string_lower + caps_lock + INPUT_TEXT_END
-        output_upper       = INPUT_TEXT_START + movement_upper[i] + "\n" + input_string_upper +             INPUT_TEXT_END
+    output_lower = f'{INPUT_TEXT_START}{movement_lower[i]}\n        <inputString>{input_string_lower}</inputString>\n        <inputCapsLockString>{input_string_upper}</inputCapsLockString>{INPUT_TEXT_END}'
+    output_upper = f'{INPUT_TEXT_START}{movement_upper[i]}\n        <inputString>{input_string_upper}</inputString>\n        <inputCapsLockString>{input_string_lower}</inputCapsLockString>{INPUT_TEXT_END}'
 
     final_output_lower += output_lower
     final_output_upper += output_upper
