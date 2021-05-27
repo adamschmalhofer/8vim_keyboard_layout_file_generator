@@ -74,15 +74,14 @@ DIRECTIONS = ['TOP', 'LEFT', 'BOTTOM', 'RIGHT']
 
 
 def movement_sequence(start_at, clockwise, steps):
-    sequence = [start_at]
+    yield start_at
     i = DIRECTIONS.index(start_at)
     direction = (-1 if clockwise else 1)
     for circular_distance in steps:
         for sector in range(0, circular_distance):
             i += direction
-            sequence.append(DIRECTIONS[i % len(DIRECTIONS)])
+            yield DIRECTIONS[i % len(DIRECTIONS)]
         direction *= -1
-    return f"        <movementSequence>INSIDE_CIRCLE;{';'.join(sequence)};INSIDE_CIRCLE;</movementSequence>"
 
 
 ################
@@ -117,15 +116,6 @@ for i in list(range(10, 14)) + list(range(20, 24)) + list(range(30, 34)) + list(
 
 
 def movement_xml_layer(layout_lower, layout_upper, at_sign_upper):
-    INPUT_TEXT_START = """
-    <keyboardAction>
-        <keyboardActionType>INPUT_TEXT</keyboardActionType>
-"""
-
-    INPUT_TEXT_END = """
-    </keyboardAction>
-"""
-
     movement_lower = [movement_sequence(start_at, clockwise, [i])
                       for start_at in reversed(DIRECTIONS)
                       for clockwise in [False, True]
@@ -163,8 +153,22 @@ def movement_xml_layer(layout_lower, layout_upper, at_sign_upper):
         elif ' ' == upper != lower:
             lower = upper
         assert(' ' not in [lower, upper])
-        final_output_lower += f'{INPUT_TEXT_START}{lower_movement}\n        <inputString>{lower}</inputString>\n        <inputCapsLockString>{upper}</inputCapsLockString>{INPUT_TEXT_END}'
-        final_output_upper += f'{INPUT_TEXT_START}{upper_movement}\n        <inputString>{upper}</inputString>\n        <inputCapsLockString>{lower}</inputCapsLockString>{INPUT_TEXT_END}'
+        final_output_lower += f"""
+    <keyboardAction>
+        <keyboardActionType>INPUT_TEXT</keyboardActionType>
+        <movementSequence>INSIDE_CIRCLE;{';'.join(lower_movement)};INSIDE_CIRCLE;</movementSequence>
+        <inputString>{lower}</inputString>
+        <inputCapsLockString>{upper}</inputCapsLockString>
+    </keyboardAction>
+"""
+        final_output_upper += f"""
+    <keyboardAction>
+        <keyboardActionType>INPUT_TEXT</keyboardActionType>
+        <movementSequence>INSIDE_CIRCLE;{';'.join(upper_movement)};INSIDE_CIRCLE;</movementSequence>
+        <inputString>{upper}</inputString>
+        <inputCapsLockString>{lower}</inputCapsLockString>
+    </keyboardAction>
+"""
     return (final_output_lower, final_output_upper)
 
 
