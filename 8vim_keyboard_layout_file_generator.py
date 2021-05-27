@@ -29,6 +29,7 @@ from itertools import chain
 # "ybpqarx?nmf!ouvwelk@ihj,tcz.sdg'"
 def print_new_layout( letters, str_case, is_compact_layout=False ):
     assert(len(str_case) == 5)
+    letters = letters + ' ' * max(0, 39 - len(letters))
     layout_compact =  f"""
 {letters[33]}\{letters[38]}           {letters[3]}/{letters[8]}
  {letters[32]}\{letters[37]}         {letters[2]}/{letters[7]}
