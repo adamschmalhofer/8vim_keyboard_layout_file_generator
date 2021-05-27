@@ -88,160 +88,108 @@ def print_new_layout( letters, is_lowercase=True, is_compact_layout=False ):
 # Main program #
 ################
 
+
+DIRECTIONS = ['TOP', 'LEFT', 'BOTTOM', 'RIGHT']
+
+
+def movement_sequence(start_at, clockwise, steps):
+    sequence = [start_at]
+    i = DIRECTIONS.index(start_at)
+    direction = (-1 if clockwise else 1)
+    for circular_distance in steps:
+        for sector in range(0, circular_distance):
+            i += direction
+            sequence.append(DIRECTIONS[i % len(DIRECTIONS)])
+        direction *= -1
+    return f"        <movementSequence>INSIDE_CIRCLE;{';'.join(sequence)};INSIDE_CIRCLE;</movementSequence>"
+
+
 # The movements assigned to the original layout.
 # We use this to make the new layout 
 movement_lower = [
-    # y
-    "        <movementSequence>INSIDE_CIRCLE;TOP;RIGHT;INSIDE_CIRCLE;</movementSequence>",
-    # b
-    "        <movementSequence>INSIDE_CIRCLE;TOP;RIGHT;BOTTOM;INSIDE_CIRCLE;</movementSequence>",
-    # p
-    "        <movementSequence>INSIDE_CIRCLE;TOP;RIGHT;BOTTOM;LEFT;INSIDE_CIRCLE;</movementSequence>",
-    # q
-    "        <movementSequence>INSIDE_CIRCLE;TOP;RIGHT;BOTTOM;LEFT;TOP;INSIDE_CIRCLE;</movementSequence>",
+    movement_sequence('TOP', True, [1]),
+    movement_sequence('TOP', True, [2]),
+    movement_sequence('TOP', True, [3]),
+    movement_sequence('TOP', True, [4]),
 
-    # a
-    "        <movementSequence>INSIDE_CIRCLE;RIGHT;TOP;INSIDE_CIRCLE;</movementSequence>",
-    # r
-    "        <movementSequence>INSIDE_CIRCLE;RIGHT;TOP;LEFT;INSIDE_CIRCLE;</movementSequence>",
-    # x
-    "        <movementSequence>INSIDE_CIRCLE;RIGHT;TOP;LEFT;BOTTOM;INSIDE_CIRCLE;</movementSequence>",
-    # ?
-    "        <movementSequence>INSIDE_CIRCLE;RIGHT;TOP;LEFT;BOTTOM;RIGHT;INSIDE_CIRCLE;</movementSequence>",
-            #<inputCapsLockString>*</inputCapsLockString>
+    movement_sequence('RIGHT', False, [1]),
+    movement_sequence('RIGHT', False, [2]),
+    movement_sequence('RIGHT', False, [3]),
+    movement_sequence('RIGHT', False, [4]),
 
-    # n
-    "        <movementSequence>INSIDE_CIRCLE;RIGHT;BOTTOM;INSIDE_CIRCLE;</movementSequence>",
-    # m
-    "        <movementSequence>INSIDE_CIRCLE;RIGHT;BOTTOM;LEFT;INSIDE_CIRCLE;</movementSequence>",
-    # f
-    "        <movementSequence>INSIDE_CIRCLE;RIGHT;BOTTOM;LEFT;TOP;INSIDE_CIRCLE;</movementSequence>",
-    # !
-    "        <movementSequence>INSIDE_CIRCLE;RIGHT;BOTTOM;LEFT;TOP;RIGHT;INSIDE_CIRCLE;</movementSequence>",
+    movement_sequence('RIGHT', True, [1]),
+    movement_sequence('RIGHT', True, [2]),
+    movement_sequence('RIGHT', True, [3]),
+    movement_sequence('RIGHT', True, [4]),
 
-    # o
-    "        <movementSequence>INSIDE_CIRCLE;BOTTOM;RIGHT;INSIDE_CIRCLE;</movementSequence>",
-    # u
-    "        <movementSequence>INSIDE_CIRCLE;BOTTOM;RIGHT;TOP;INSIDE_CIRCLE;</movementSequence>",
-    # v
-    "        <movementSequence>INSIDE_CIRCLE;BOTTOM;RIGHT;TOP;LEFT;INSIDE_CIRCLE;</movementSequence>",
-    # w
-    "        <movementSequence>INSIDE_CIRCLE;BOTTOM;RIGHT;TOP;LEFT;BOTTOM;INSIDE_CIRCLE;</movementSequence>",
+    movement_sequence('BOTTOM', False, [1]),
+    movement_sequence('BOTTOM', False, [2]),
+    movement_sequence('BOTTOM', False, [3]),
+    movement_sequence('BOTTOM', False, [4]),
 
-    # e
-    "        <movementSequence>INSIDE_CIRCLE;BOTTOM;LEFT;INSIDE_CIRCLE;</movementSequence>",
-    # l
-    "        <movementSequence>INSIDE_CIRCLE;BOTTOM;LEFT;TOP;INSIDE_CIRCLE;</movementSequence>",
-    # k
-    "        <movementSequence>INSIDE_CIRCLE;BOTTOM;LEFT;TOP;RIGHT;INSIDE_CIRCLE;</movementSequence>",
-    # @
-    "        <movementSequence>INSIDE_CIRCLE;BOTTOM;LEFT;TOP;RIGHT;BOTTOM;INSIDE_CIRCLE;</movementSequence>",
+    movement_sequence('BOTTOM', True, [1]),
+    movement_sequence('BOTTOM', True, [2]),
+    movement_sequence('BOTTOM', True, [3]),
+    movement_sequence('BOTTOM', True, [4]),
 
-    # i
-    "        <movementSequence>INSIDE_CIRCLE;LEFT;BOTTOM;INSIDE_CIRCLE;</movementSequence>",
-    # h
-    "        <movementSequence>INSIDE_CIRCLE;LEFT;BOTTOM;RIGHT;INSIDE_CIRCLE;</movementSequence>",
-    # j
-    "        <movementSequence>INSIDE_CIRCLE;LEFT;BOTTOM;RIGHT;TOP;INSIDE_CIRCLE;</movementSequence>",
-    # ,
-    "        <movementSequence>INSIDE_CIRCLE;LEFT;BOTTOM;RIGHT;TOP;LEFT;INSIDE_CIRCLE;</movementSequence>",
-            #<inputCapsLockString>_</inputCapsLockString>
+    movement_sequence('LEFT', False, [1]),
+    movement_sequence('LEFT', False, [2]),
+    movement_sequence('LEFT', False, [3]),
+    movement_sequence('LEFT', False, [4]),
 
-    # t
-    "        <movementSequence>INSIDE_CIRCLE;LEFT;TOP;INSIDE_CIRCLE;</movementSequence>",
-    # c
-    "        <movementSequence>INSIDE_CIRCLE;LEFT;TOP;RIGHT;INSIDE_CIRCLE;</movementSequence>",
-    # z
-    "        <movementSequence>INSIDE_CIRCLE;LEFT;TOP;RIGHT;BOTTOM;INSIDE_CIRCLE;</movementSequence>",
-    # .
-    "        <movementSequence>INSIDE_CIRCLE;LEFT;TOP;RIGHT;BOTTOM;LEFT;INSIDE_CIRCLE;</movementSequence>",
-            #<inputCapsLockString>-</inputCapsLockString>
+    movement_sequence('LEFT', True, [1]),
+    movement_sequence('LEFT', True, [2]),
+    movement_sequence('LEFT', True, [3]),
+    movement_sequence('LEFT', True, [4]),
 
-    # s
-    "        <movementSequence>INSIDE_CIRCLE;TOP;LEFT;INSIDE_CIRCLE;</movementSequence>",
-    # d
-    "        <movementSequence>INSIDE_CIRCLE;TOP;LEFT;BOTTOM;INSIDE_CIRCLE;</movementSequence>",
-    # g
-    "        <movementSequence>INSIDE_CIRCLE;TOP;LEFT;BOTTOM;RIGHT;INSIDE_CIRCLE;</movementSequence>",
-    # '
-    "        <movementSequence>INSIDE_CIRCLE;TOP;LEFT;BOTTOM;RIGHT;TOP;INSIDE_CIRCLE;</movementSequence>"
-            #<inputCapsLockString>"</inputCapsLockString>
+    movement_sequence('TOP', False, [1]),
+    movement_sequence('TOP', False, [2]),
+    movement_sequence('TOP', False, [3]),
+    movement_sequence('TOP', False, [4]),
 ]
 
 
 # The movement for going all the way around the board to capitalize.
 movement_upper = [
-    # Y
-    "        <movementSequence>INSIDE_CIRCLE;TOP;RIGHT;BOTTOM;LEFT;TOP;RIGHT;INSIDE_CIRCLE;</movementSequence>",
-    # B
-    "        <movementSequence>INSIDE_CIRCLE;TOP;RIGHT;BOTTOM;LEFT;TOP;RIGHT;BOTTOM;INSIDE_CIRCLE;</movementSequence>",
-    # P
-    "        <movementSequence>INSIDE_CIRCLE;TOP;RIGHT;BOTTOM;LEFT;TOP;RIGHT;BOTTOM;LEFT;INSIDE_CIRCLE;</movementSequence>",
-    # Q
-    "        <movementSequence>INSIDE_CIRCLE;TOP;RIGHT;BOTTOM;LEFT;TOP;RIGHT;BOTTOM;LEFT;TOP;INSIDE_CIRCLE;</movementSequence>",
+    movement_sequence('TOP', True, [5]),
+    movement_sequence('TOP', True, [6]),
+    movement_sequence('TOP', True, [7]),
+    movement_sequence('TOP', True, [8]),
 
-    # A
-    "        <movementSequence>INSIDE_CIRCLE;RIGHT;TOP;LEFT;BOTTOM;RIGHT;TOP;INSIDE_CIRCLE;</movementSequence>",
-    # R
-    "        <movementSequence>INSIDE_CIRCLE;RIGHT;TOP;LEFT;BOTTOM;RIGHT;TOP;LEFT;INSIDE_CIRCLE;</movementSequence>",
-    # X
-    "        <movementSequence>INSIDE_CIRCLE;RIGHT;TOP;LEFT;BOTTOM;RIGHT;TOP;LEFT;BOTTOM;INSIDE_CIRCLE;</movementSequence>",
-    # *
-    "        <movementSequence>INSIDE_CIRCLE;RIGHT;TOP;LEFT;BOTTOM;RIGHT;TOP;LEFT;BOTTOM;RIGHT;INSIDE_CIRCLE;</movementSequence>",
+    movement_sequence('RIGHT', False, [5]),
+    movement_sequence('RIGHT', False, [6]),
+    movement_sequence('RIGHT', False, [7]),
+    movement_sequence('RIGHT', False, [8]),
 
-    # N
-    "        <movementSequence>INSIDE_CIRCLE;RIGHT;BOTTOM;LEFT;TOP;RIGHT;BOTTOM;INSIDE_CIRCLE;</movementSequence>",
-    # M
-    "        <movementSequence>INSIDE_CIRCLE;RIGHT;BOTTOM;LEFT;TOP;RIGHT;BOTTOM;LEFT;INSIDE_CIRCLE;</movementSequence>",
-    # F
-    "        <movementSequence>INSIDE_CIRCLE;RIGHT;BOTTOM;LEFT;TOP;RIGHT;BOTTOM;LEFT;TOP;INSIDE_CIRCLE;</movementSequence>",
-    # !
-    "        <movementSequence>INSIDE_CIRCLE;RIGHT;BOTTOM;LEFT;TOP;RIGHT;BOTTOM;LEFT;TOP;RIGHT;INSIDE_CIRCLE;</movementSequence>",
+    movement_sequence('RIGHT', True, [5]),
+    movement_sequence('RIGHT', True, [6]),
+    movement_sequence('RIGHT', True, [7]),
+    movement_sequence('RIGHT', True, [8]),
 
-    # O
-    "        <movementSequence>INSIDE_CIRCLE;BOTTOM;RIGHT;TOP;LEFT;BOTTOM;RIGHT;INSIDE_CIRCLE;</movementSequence>",
-    # U
-    "        <movementSequence>INSIDE_CIRCLE;BOTTOM;RIGHT;TOP;LEFT;BOTTOM;RIGHT;TOP;INSIDE_CIRCLE;</movementSequence>",
-    # V
-    "        <movementSequence>INSIDE_CIRCLE;BOTTOM;RIGHT;TOP;LEFT;BOTTOM;RIGHT;TOP;LEFT;INSIDE_CIRCLE;</movementSequence>",
-    # W
-    "        <movementSequence>INSIDE_CIRCLE;BOTTOM;RIGHT;TOP;LEFT;BOTTOM;RIGHT;TOP;LEFT;BOTTOM;INSIDE_CIRCLE;</movementSequence>",
+    movement_sequence('BOTTOM', False, [5]),
+    movement_sequence('BOTTOM', False, [6]),
+    movement_sequence('BOTTOM', False, [7]),
+    movement_sequence('BOTTOM', False, [8]),
 
-    # E
-    "        <movementSequence>INSIDE_CIRCLE;BOTTOM;LEFT;TOP;RIGHT;BOTTOM;LEFT;INSIDE_CIRCLE;</movementSequence>",
-    # L
-    "        <movementSequence>INSIDE_CIRCLE;BOTTOM;LEFT;TOP;RIGHT;BOTTOM;LEFT;TOP;INSIDE_CIRCLE;</movementSequence>",
-    # K
-    "        <movementSequence>INSIDE_CIRCLE;BOTTOM;LEFT;TOP;RIGHT;BOTTOM;LEFT;TOP;RIGHT;INSIDE_CIRCLE;</movementSequence>",
-    # @
-    "        <movementSequence>INSIDE_CIRCLE;BOTTOM;LEFT;TOP;RIGHT;BOTTOM;LEFT;TOP;RIGHT;BOTTOM;INSIDE_CIRCLE;</movementSequence>",
+    movement_sequence('BOTTOM', True, [5]),
+    movement_sequence('BOTTOM', True, [6]),
+    movement_sequence('BOTTOM', True, [7]),
+    movement_sequence('BOTTOM', True, [8]),
 
-    # I
-    "        <movementSequence>INSIDE_CIRCLE;LEFT;BOTTOM;RIGHT;TOP;LEFT;BOTTOM;INSIDE_CIRCLE;</movementSequence>",
-    # H
-    "        <movementSequence>INSIDE_CIRCLE;LEFT;BOTTOM;RIGHT;TOP;LEFT;BOTTOM;RIGHT;INSIDE_CIRCLE;</movementSequence>",
-    # J
-    "        <movementSequence>INSIDE_CIRCLE;LEFT;BOTTOM;RIGHT;TOP;LEFT;BOTTOM;RIGHT;TOP;INSIDE_CIRCLE;</movementSequence>",
-    # _
-    "        <movementSequence>INSIDE_CIRCLE;LEFT;BOTTOM;RIGHT;TOP;LEFT;BOTTOM;RIGHT;TOP;LEFT;INSIDE_CIRCLE;</movementSequence>",
+    movement_sequence('LEFT', False, [5]),
+    movement_sequence('LEFT', False, [6]),
+    movement_sequence('LEFT', False, [7]),
+    movement_sequence('LEFT', False, [8]),
 
-    # T
-    "        <movementSequence>INSIDE_CIRCLE;LEFT;TOP;RIGHT;BOTTOM;LEFT;TOP;INSIDE_CIRCLE;</movementSequence>",
-    # C
-    "        <movementSequence>INSIDE_CIRCLE;LEFT;TOP;RIGHT;BOTTOM;LEFT;TOP;RIGHT;INSIDE_CIRCLE;</movementSequence>",
-    # Z
-    "        <movementSequence>INSIDE_CIRCLE;LEFT;TOP;RIGHT;BOTTOM;LEFT;TOP;RIGHT;BOTTOM;INSIDE_CIRCLE;</movementSequence>",
-    # -
-    "        <movementSequence>INSIDE_CIRCLE;LEFT;TOP;RIGHT;BOTTOM;LEFT;TOP;RIGHT;BOTTOM;LEFT;INSIDE_CIRCLE;</movementSequence>",
+    movement_sequence('LEFT', True, [5]),
+    movement_sequence('LEFT', True, [6]),
+    movement_sequence('LEFT', True, [7]),
+    movement_sequence('LEFT', True, [8]),
 
-    # S
-    "        <movementSequence>INSIDE_CIRCLE;TOP;LEFT;BOTTOM;RIGHT;TOP;LEFT;INSIDE_CIRCLE;</movementSequence>",
-    # D
-    "        <movementSequence>INSIDE_CIRCLE;TOP;LEFT;BOTTOM;RIGHT;TOP;LEFT;BOTTOM;INSIDE_CIRCLE;</movementSequence>",
-    # G
-    "        <movementSequence>INSIDE_CIRCLE;TOP;LEFT;BOTTOM;RIGHT;TOP;LEFT;BOTTOM;RIGHT;INSIDE_CIRCLE;</movementSequence>",
-    # "
-    "        <movementSequence>INSIDE_CIRCLE;TOP;LEFT;BOTTOM;RIGHT;TOP;LEFT;BOTTOM;RIGHT;TOP;INSIDE_CIRCLE;</movementSequence>"
+    movement_sequence('TOP', False, [5]),
+    movement_sequence('TOP', False, [6]),
+    movement_sequence('TOP', False, [7]),
+    movement_sequence('TOP', False, [8]),
 ]
 
 
