@@ -22,6 +22,7 @@
 
 import sys
 from itertools import chain, zip_longest
+from os.path import splitext
 
 
 def duo_colum(first, seccond, boarder_width=10):
@@ -332,6 +333,7 @@ class LayeringStrategies:
 # Main program #
 ################
 
+outfile = splitext(sys.argv[1])[0] + '.xml' if len(sys.argv) == 2 else sys.argv[2]
 
 with open(sys.argv[1]) as f:
     lines = [text.rstrip('\n\r') for text in f.readlines()]
@@ -352,7 +354,7 @@ for new_layout_lower, new_layout_upper, layer in [(lower, upper, i // 2) for i, 
     layers.append(movement_xml_layer(new_layout_lower, new_layout_upper, layer, at_sign_overloads, layering))
 
 
-with open("keyboard_actions.xml", "w") as f:
+with open(outfile, "w") as f:
     f.write( ''.join([XML_START] + layers + [XML_END]) )
 
 
@@ -365,7 +367,7 @@ print( "String characterSetSmall = \"" + layer0_string_lower.replace("\"", "\\\"
 print( "String characterSetCaps  = \"" + layer0_string_upper.replace("\"", "\\\"") + "\";" )
 print("")
 print("The new keyboard layout has been saved to:")
-print("keyboard_actions.xml")
+print(outfile)
 print("Move it to here:")
 print("8vim/src/main/res/raw/keyboard_actions.xml")
 print("")
