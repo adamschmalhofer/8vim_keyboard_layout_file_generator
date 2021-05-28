@@ -171,142 +171,6 @@ def movement_xml_layer(layout_lower, layout_upper, layer, at_sign_upper, layered
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->{final_output_upper}"""
 
 
-XML_START = """<keyboardActionMap>
-    <!-- Keywords for defining the movements -->
-    <!--{NO_TOUCH, INSIDE_CIRCLE, TOP, LEFT, BOTTOM, RIGHT}-->
-"""
-
-XML_END = """
-
-    <!--Paste Sequence-->
-    <keyboardAction>
-        <keyboardActionType>INPUT_SPECIAL</keyboardActionType>
-        <movementSequence>LEFT;INSIDE_CIRCLE;NO_TOUCH;</movementSequence>
-        <inputString>PASTE</inputString>
-    </keyboardAction>
-
-
-    <!--Shift-->
-    <keyboardAction>
-        <keyboardActionType>INPUT_SPECIAL</keyboardActionType>
-        <movementSequence>TOP;NO_TOUCH;</movementSequence>
-        <inputString>SHIFT_TOOGLE</inputString>
-    </keyboardAction>
-
-
-    <!-- Switch to Numpad-->
-    <keyboardAction>
-        <keyboardActionType>INPUT_SPECIAL</keyboardActionType>
-        <movementSequence>LEFT;NO_TOUCH;</movementSequence>
-        <inputString>SWITCH_TO_NUMBER_PAD</inputString>
-    </keyboardAction>
-
-
-    <!--Selection Mode Sequence-->
-    <keyboardAction>
-        <keyboardActionType>INPUT_SPECIAL</keyboardActionType>
-        <movementSequence>RIGHT;INSIDE_CIRCLE;NO_TOUCH;</movementSequence>
-        <inputString>SELECTION_START</inputString>
-    </keyboardAction>
-    <keyboardAction>
-        <keyboardActionType>INPUT_SPECIAL</keyboardActionType>
-        <movementSequence>RIGHT;INSIDE_CIRCLE;LONG_PRESS;</movementSequence>
-        <inputString>SELECTION_START</inputString>
-    </keyboardAction>
-    <keyboardAction>
-        <keyboardActionType>INPUT_SPECIAL</keyboardActionType>
-        <movementSequence>RIGHT;INSIDE_CIRCLE;LONG_PRESS_END;</movementSequence>
-        <inputString>SWITCH_TO_SELECTION_KEYBOARD</inputString>
-    </keyboardAction>
-
-
-    <!--Space-->
-    <keyboardAction>
-        <keyboardActionType>INPUT_KEY</keyboardActionType>
-        <movementSequence>INSIDE_CIRCLE;NO_TOUCH;</movementSequence>
-        <inputKey>KEYCODE_SPACE</inputKey>
-    </keyboardAction>
-
-
-    <!-- Enter and Delete -->
-    <keyboardAction>
-        <keyboardActionType>INPUT_KEY</keyboardActionType>
-        <movementSequence>BOTTOM;NO_TOUCH;</movementSequence>
-        <inputKey>KEYCODE_ENTER</inputKey>
-    </keyboardAction>
-
-    <keyboardAction>
-        <keyboardActionType>INPUT_KEY</keyboardActionType>
-        <movementSequence>BOTTOM;LONG_PRESS;</movementSequence>
-        <inputKey>KEYCODE_ENTER</inputKey>
-    </keyboardAction>
-
-    <keyboardAction>
-        <keyboardActionType>INPUT_KEY</keyboardActionType>
-        <movementSequence>RIGHT;NO_TOUCH;</movementSequence>
-        <inputKey>KEYCODE_DEL</inputKey>
-    </keyboardAction>
-    <keyboardAction>
-        <keyboardActionType>INPUT_KEY</keyboardActionType>
-        <movementSequence>RIGHT;LONG_PRESS;</movementSequence>
-        <inputKey>KEYCODE_DEL</inputKey>
-    </keyboardAction>
-
-
-    <!--D_Pad key-->
-    <keyboardAction>
-        <keyboardActionType>INPUT_KEY</keyboardActionType>
-        <movementSequence>NO_TOUCH;INSIDE_CIRCLE;TOP;NO_TOUCH;</movementSequence>
-        <inputKey>KEYCODE_DPAD_UP</inputKey>
-    </keyboardAction>
-    <keyboardAction>
-        <keyboardActionType>INPUT_KEY</keyboardActionType>
-        <movementSequence>NO_TOUCH;INSIDE_CIRCLE;BOTTOM;NO_TOUCH;</movementSequence>
-        <inputKey>KEYCODE_DPAD_DOWN</inputKey>
-    </keyboardAction>
-    <keyboardAction>
-        <keyboardActionType>INPUT_KEY</keyboardActionType>
-        <movementSequence>NO_TOUCH;INSIDE_CIRCLE;LEFT;NO_TOUCH;</movementSequence>
-        <inputKey>KEYCODE_DPAD_LEFT</inputKey>
-    </keyboardAction>
-    <keyboardAction>
-        <keyboardActionType>INPUT_KEY</keyboardActionType>
-        <movementSequence>NO_TOUCH;INSIDE_CIRCLE;RIGHT;NO_TOUCH;</movementSequence>
-        <inputKey>KEYCODE_DPAD_RIGHT</inputKey>
-    </keyboardAction>
-
-
-    <!--Long press configuration-->
-    <keyboardAction>
-        <keyboardActionType>INPUT_KEY</keyboardActionType>
-        <movementSequence>NO_TOUCH;INSIDE_CIRCLE;TOP;LONG_PRESS;</movementSequence>
-        <inputKey>KEYCODE_DPAD_UP</inputKey>
-    </keyboardAction>
-    <keyboardAction>
-        <keyboardActionType>INPUT_KEY</keyboardActionType>
-        <movementSequence>NO_TOUCH;INSIDE_CIRCLE;BOTTOM;LONG_PRESS;</movementSequence>
-        <inputKey>KEYCODE_DPAD_DOWN</inputKey>
-    </keyboardAction>
-    <keyboardAction>
-        <keyboardActionType>INPUT_KEY</keyboardActionType>
-        <movementSequence>NO_TOUCH;INSIDE_CIRCLE;LEFT;LONG_PRESS;</movementSequence>
-        <inputKey>KEYCODE_DPAD_LEFT</inputKey>
-    </keyboardAction>
-    <keyboardAction>
-        <keyboardActionType>INPUT_KEY</keyboardActionType>
-        <movementSequence>NO_TOUCH;INSIDE_CIRCLE;RIGHT;LONG_PRESS;</movementSequence>
-        <inputKey>KEYCODE_DPAD_RIGHT</inputKey>
-    </keyboardAction>
-
-
-    <!-- Hide keyboard -->
-    <keyboardAction>
-        <keyboardActionType>INPUT_SPECIAL</keyboardActionType>
-        <movementSequence>TOP;INSIDE_CIRCLE;NO_TOUCH</movementSequence>
-        <inputString>HIDE_KEYBOARD</inputString>
-    </keyboardAction>
-
-</keyboardActionMap>"""
 
 
 class LayeringStrategies:
@@ -355,7 +219,11 @@ for new_layout_lower, new_layout_upper, layer in [(lower, upper, i // 2) for i, 
 
 
 with open(outfile, "w") as f:
-    f.write( ''.join([XML_START] + layers + [XML_END]) )
+    f.write("""<keyboardActionMap>
+    <!-- Keywords for defining the movements -->
+    <!--{{NO_TOUCH, INSIDE_CIRCLE, TOP, LEFT, BOTTOM, RIGHT}}-->
+{}
+</keyboardActionMap>""".format('\n'.join(layers)))
 
 
 print()
