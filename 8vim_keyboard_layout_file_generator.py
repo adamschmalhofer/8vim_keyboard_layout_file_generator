@@ -186,7 +186,7 @@ class LayeringStrategies:
     def prefix_eight_pen(self, start_at, clockwise, num_steps, layer, is_upper):
         return movement_sequence(start_at, clockwise, [1, 1]*layer + self.full_circle_to_capitalize(num_steps, is_upper))
 
-    def seperate_letter(self, start_at, clockwise, num_steps, layer, is_upper):
+    def separate_letter(self, start_at, clockwise, num_steps, layer, is_upper):
         return ['TOP', 'INSIDE_CIRCLE']*layer + list(movement_sequence(start_at, clockwise, self.full_circle_to_capitalize(num_steps, is_upper)))
 
     def get_strategy(self, name):
