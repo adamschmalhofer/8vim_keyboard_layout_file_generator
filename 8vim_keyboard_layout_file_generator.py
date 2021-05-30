@@ -171,8 +171,6 @@ def movement_xml_layer(layout_lower, layout_upper, layer, at_sign_upper, layered
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->{final_output_upper}"""
 
 
-
-
 class LayeringStrategies:
     def full_circle_to_capitalize(self, num_steps, is_upper):
         return [num_steps + (4 if is_upper else 0)]
