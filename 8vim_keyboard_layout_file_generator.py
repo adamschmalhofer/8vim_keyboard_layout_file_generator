@@ -162,13 +162,13 @@ def movement_xml_layer(layout_lower, layout_upper, layer, at_sign_upper, layered
         </keyboardAction>
 """
     return f"""
-    <!-- ~~~~~~~~~ -->
-    <!-- Lowercase -->
-    <!-- ~~~~~~~~~ -->{final_output_lower}
+        <!-- ~~~~~~~~~ -->
+        <!-- Lowercase -->
+        <!-- ~~~~~~~~~ -->{final_output_lower}
 
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-    <!-- Capital Characters by going all the way around the board -->
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->{final_output_upper}"""
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <!-- Capital Characters by going all the way around the board -->
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->{final_output_upper}"""
 
 
 class LayeringStrategies:
@@ -209,9 +209,9 @@ for new_layout_lower, new_layout_upper, layer in [(lower, upper, i // 2) for i, 
         layer0_string_lower = to_8vim_layout_string(new_layout_lower)
     else:
         layers.append(f"""
-    <!-- ========= -->
-    <!-- Layer {layer}   -->
-    <!-- ========= -->""")
+        <!-- ========= -->
+        <!-- Layer {layer}   -->
+        <!-- ========= -->""")
     print('\n'.join(duo_colum(ascii_art( new_layout_lower, "lower", f"L {layer}" ), ascii_art( new_layout_upper, "upper", f"L {layer}" ))))
     layers.append(movement_xml_layer(new_layout_lower, new_layout_upper, layer, at_sign_overloads, layering))
 
@@ -223,8 +223,8 @@ with open(outfile, "w") as f:
         <upperCase>{}</upperCase>
     </keyboardCharacterSet>
     <keyboardActionMap>
-    <!-- Keywords for defining the movements -->
-    <!--{{NO_TOUCH, INSIDE_CIRCLE, TOP, LEFT, BOTTOM, RIGHT}}-->
+        <!-- Keywords for defining the movements -->
+        <!--{{NO_TOUCH, INSIDE_CIRCLE, TOP, LEFT, BOTTOM, RIGHT}}-->
 {}
     </keyboardActionMap>
 </keyboardData>""".format(layer0_string_lower, layer0_string_upper, '\n'.join(layers)))
