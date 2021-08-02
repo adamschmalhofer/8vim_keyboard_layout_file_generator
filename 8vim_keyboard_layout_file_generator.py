@@ -146,20 +146,20 @@ def movement_xml_layer(layout_lower, layout_upper, layer, at_sign_upper, layered
             upper = caps_upper = lower
         assert(' ' not in [lower, upper])
         final_output_lower += f"""
-    <keyboardAction>
-        <keyboardActionType>INPUT_TEXT</keyboardActionType>
-        <movementSequence>INSIDE_CIRCLE;{';'.join(lower_movement)};INSIDE_CIRCLE;</movementSequence>
-        <inputString>{lower}</inputString>
-        <inputCapsLockString>{upper}</inputCapsLockString>
-    </keyboardAction>
+        <keyboardAction>
+            <keyboardActionType>INPUT_TEXT</keyboardActionType>
+            <movementSequence>INSIDE_CIRCLE;{';'.join(lower_movement)};INSIDE_CIRCLE;</movementSequence>
+            <inputString>{lower}</inputString>
+            <inputCapsLockString>{upper}</inputCapsLockString>
+        </keyboardAction>
 """
         final_output_upper += f"""
-    <keyboardAction>
-        <keyboardActionType>INPUT_TEXT</keyboardActionType>
-        <movementSequence>INSIDE_CIRCLE;{';'.join(upper_movement)};INSIDE_CIRCLE;</movementSequence>
-        <inputString>{caps_upper}</inputString>
-        <inputCapsLockString>{caps_lower}</inputCapsLockString>
-    </keyboardAction>
+        <keyboardAction>
+            <keyboardActionType>INPUT_TEXT</keyboardActionType>
+            <movementSequence>INSIDE_CIRCLE;{';'.join(upper_movement)};INSIDE_CIRCLE;</movementSequence>
+            <inputString>{caps_upper}</inputString>
+            <inputCapsLockString>{caps_lower}</inputCapsLockString>
+        </keyboardAction>
 """
     return f"""
     <!-- ~~~~~~~~~ -->
@@ -217,25 +217,26 @@ for new_layout_lower, new_layout_upper, layer in [(lower, upper, i // 2) for i, 
 
 
 with open(outfile, "w") as f:
-    f.write("""<keyboardActionMap>
+    f.write("""<keyboardData>
+    <keyboardCharacterSet>
+        <lowerCase>{}</lowerCase>
+        <upperCase>{}</upperCase>
+    </keyboardCharacterSet>
+    <keyboardActionMap>
     <!-- Keywords for defining the movements -->
     <!--{{NO_TOUCH, INSIDE_CIRCLE, TOP, LEFT, BOTTOM, RIGHT}}-->
 {}
-</keyboardActionMap>""".format('\n'.join(layers)))
-
+    </keyboardActionMap>
+</keyboardData>""".format(layer0_string_lower, layer0_string_upper, '\n'.join(layers)))
 
 print()
 print("--- Usage Notes ---")
-print("Edit this file")
-print("8vim/src/main/java/inc/flide/vim8/views/mainKeyboard/XpadView.java)")
-print("Change these variables to this:")
-print( "String characterSetSmall = \"" + layer0_string_lower.replace("\"", "\\\"") + "\";" )
-print( "String characterSetCaps  = \"" + layer0_string_upper.replace("\"", "\\\"") + "\";" )
 print("")
 print("The new keyboard layout has been saved to:")
 print(outfile)
+print("It should have the format:"
+      " {language-iso-code}_regular_{layout-name}.xml")
 print("Move it to here:")
-print("8vim/src/main/res/raw/keyboard_actions.xml")
+print("8vim/src/main/res/raw/")
 print("")
 print("Rebuild 8vim and send the apk to your phone.")
-
